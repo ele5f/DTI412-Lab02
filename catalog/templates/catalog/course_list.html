@@ -1,0 +1,59 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}All Courses - DTI CoursePortal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">Offered IT Courses</h2>
+    <span class="badge bg-primary fs-6">{{ courses|length }} Courses Available</span>
+</div>
+
+<!-- Extension Challenge: GET search bar -->
+<form method="GET" action="{% url 'catalog:course_list' %}" class="row g-2 mb-4">
+    <div class="col-md-10">
+        <input type="search" class="form-control" name="q" value="{{ query }}"
+               placeholder="Search by course code or title (e.g. DTI412, React)">
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+{% if query %}
+<p class="text-muted">
+    Showing results for "<strong>{{ query }}</strong>" &middot;
+    <a href="{% url 'catalog:course_list' %}">Clear search</a>
+</p>
+{% endif %}
+
+<div class="row">
+    {% for course in courses %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm border">
+            <div class="card-header bg-white border-bottom-0 pt-3">
+                <span class="badge bg-secondary mb-2">{{ course.code }}</span>
+                <h5 class="card-title fw-bold text-primary">{{ course.title }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-secondary small">{{ course.description }}</p>
+                <div class="border-top pt-2 mt-3">
+                    <small class="d-block text-muted"><strong>Credits:</strong> {{ course.credits }} Credits</small>
+                    <small class="d-block text-muted"><strong>Instructor:</strong> {{ course.instructor }}</small>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top-0 pb-3">
+                <a href="{% url 'catalog:course_detail' course.id %}" class="btn btn-primary w-100">View Course Detail</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        {% if query %}
+        <div class="alert alert-warning">No courses match "{{ query }}".</div>
+        {% else %}
+        <div class="alert alert-warning">No courses are currently listed in the catalog.</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
